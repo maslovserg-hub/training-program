@@ -50,6 +50,9 @@
   .card h2{font-size:1.05rem;margin:0 0 4px}
   .card .sub{color:var(--muted);font-size:.9rem;margin:0}
 
+  .rest-card{text-align:center;padding:24px 18px}
+  .rest-card .big{font-size:1.25rem;font-weight:700;margin:8px 0}
+
   .ex{padding:14px 0;border-bottom:1px solid var(--line)}
   .ex:last-child{border-bottom:none;padding-bottom:2px}
   .ex-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -432,9 +435,9 @@ function render(){
   const dateLine = document.getElementById("dateLine");
 
   if(!browsing && sess.isRest){
-    kicker.textContent = "Следующая тренировка";
-    title.textContent = "День "+w.code+" · "+w.dayName;
-    dateLine.textContent = "сегодня отдых · по графику — " + sess.refDate.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+    kicker.textContent = "Сегодня отдых";
+    title.textContent = "День отдыха";
+    dateLine.textContent = today.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
   } else {
     kicker.textContent = browsing ? "Просмотр" : "Тренировка на сегодня";
     title.textContent = "День "+w.code+" · "+w.dayName;
@@ -451,11 +454,30 @@ function render(){
   addBadge(w.blockName);
   if(w.isDeload) addBadge("Разгрузка", "warn");
   if(w.isTest) addBadge("Тест", "warn");
-  if(!browsing && sess.isRest) addBadge("Сегодня отдых", "alt");
 
   // основная часть
   const main = document.getElementById("main");
   main.innerHTML="";
+
+  if(!browsing && sess.isRest){
+    const nx = decode(sess.idx);
+    const nw = buildWorkout(nx.week, nx.dayIndex);
+    const pv = decode(Math.max(0, sess.idx - 1));
+    const pw = buildWorkout(pv.week, pv.dayIndex);
+    const card = document.createElement("div");
+    card.className="card rest-card";
+    card.innerHTML = `
+      <div class="muted">Восстанавливайся 💆</div>
+      <div class="big">Сегодня день отдыха</div>
+      <div class="muted">Следующая по графику: ${sess.refDate.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"})} · День ${nw.code}</div>
+      <div style="margin-top:16px"><button class="btn-primary" onclick="peekPrev()">Вернуться к прошлой тренировке · День ${pw.code}</button></div>
+      <div class="muted" style="margin-top:10px;font-size:.85rem">Пропустил тренировку и хочешь нагнать сегодня — открой её здесь.</div>
+    `;
+    main.appendChild(card);
+    renderYearMap(nx.week);
+    syncSettings();
+    return;
+  }
 
   // карточка: блок-фокус
   const focus = document.createElement("div");
@@ -546,6 +568,7 @@ function renderYearMap(currentWeek, browseHighlight){
 
 /* ================= ДЕЙСТВИЯ ================= */
 function backToToday(){browseWeek=null;browseDay=0;render();window.scrollTo({top:0,behavior:"smooth"});}
+function peekPrev(){const s=currentSession();const d=decode(Math.max(0,s.idx-1));browseWeek=d.week;browseDay=d.dayIndex;render();window.scrollTo({top:0,behavior:"smooth"});}
 function setStartDate(v){if(v){localStorage.setItem(LS.start,v);render();}}
 function shiftDay(n){localStorage.setItem(LS.offset, String(getOffset()+n));render();}
 function resetOffset(){localStorage.setItem(LS.offset,"0");render();}
