@@ -43,15 +43,44 @@
       radial-gradient(70% 40% at 0% 0%, rgba(90,169,230,.06), transparent 55%);
     background-attachment:fixed;
   }
-  .wrap{max-width:640px;margin:0 auto;padding:clamp(14px,4vw,24px)}
+  .wrap{max-width:640px;margin:0 auto;padding:clamp(14px,4vw,24px);position:relative;z-index:1}
 
   /* HERO */
+  /* мобильный: фигура атлета в самой шапке-герое */
   header.top{
-    position:relative;margin:2px 0 18px;padding:22px 20px 20px;
-    border-radius:24px;border:1px solid var(--line);overflow:hidden;
+    position:relative;margin:2px 0 18px;padding:22px 122px 20px 20px;min-height:226px;
+    border-radius:24px;border:1px solid var(--line);overflow:hidden;isolation:isolate;
     background:
-      radial-gradient(120% 90% at 100% 0%, rgba(245,130,31,.18), transparent 58%),
+      radial-gradient(58% 78% at 86% 60%, rgba(245,140,45,.5), rgba(245,130,31,.16) 46%, transparent 72%),
+      radial-gradient(120% 90% at 100% 0%, rgba(245,130,31,.16), transparent 60%),
       linear-gradient(180deg,#17191d,#0e0f12);
+  }
+  .hero-athlete{
+    position:absolute;right:-6px;bottom:0;width:auto;height:auto;max-height:232px;max-width:172px;
+    z-index:0;pointer-events:none;user-select:none;
+    filter:brightness(1.14) contrast(1.05) drop-shadow(0 0 16px rgba(255,165,75,.5));
+  }
+  header.top::after{
+    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,#15171c 42%,rgba(21,23,28,.42) 60%,rgba(21,23,28,0) 74%);
+  }
+  header.top>*:not(.hero-athlete){position:relative;z-index:2}
+
+  /* десктоп: фигура атлета — фоном в свободном правом поле страницы */
+  .page-figure{
+    position:fixed;top:0;bottom:0;right:0;width:calc((100vw - 640px) / 2);
+    pointer-events:none;z-index:0;display:none;overflow:hidden;
+    background:radial-gradient(62% 46% at 56% 56%, rgba(245,140,45,.36), transparent 72%);
+  }
+  .page-figure img{
+    position:absolute;right:8%;bottom:0;width:auto;height:auto;max-height:min(82vh,820px);max-width:84%;
+    filter:brightness(1.12) contrast(1.05) drop-shadow(0 0 34px rgba(255,170,80,.4));
+  }
+  @media (min-width:1240px){
+    .page-figure{display:block}
+    .hero-athlete{display:none}
+    header.top{min-height:0;padding-right:20px}
+    header.top::after{display:none}
   }
   .kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
   h1{font-size:clamp(1.7rem,7.5vw,2.4rem);margin:.28em 0 .06em;line-height:1.04;letter-spacing:-.02em;font-weight:800}
@@ -236,6 +265,7 @@
 </style>
 </head>
 <body>
+<div class="page-figure" aria-hidden="true"><img src="athlete-kb.webp" alt=""></div>
 <div class="wrap">
 
   <div id="browsingBar" class="browsing-bar" style="display:none">
@@ -249,6 +279,7 @@
     <div class="date" id="dateLine"></div>
     <div class="badges" id="badges"></div>
     <div class="hero-progress" id="heroProgress"></div>
+    <img class="hero-athlete" src="athlete-kb.webp" alt="" aria-hidden="true">
   </header>
 
   <main id="main"></main>
@@ -807,6 +838,10 @@ function render(){
   if(browsing){
     document.getElementById("browsingLabel").textContent = "Просмотр · неделя "+week;
   }
+
+  // в споте фигуры: день отдыха — бегун, иначе — атлет с гирей
+  const figSrc = (!browsing && sess.isRest) ? "athlete-run.webp" : "athlete-kb.webp";
+  document.querySelectorAll(".hero-athlete, .page-figure img").forEach(im=>{ if(im.getAttribute("src")!==figSrc) im.setAttribute("src", figSrc); });
 
   const w = buildWorkout(week, dayIndex);
 
