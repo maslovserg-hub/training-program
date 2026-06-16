@@ -577,7 +577,12 @@ const EX_ICON = {
   "Толчок гири":"kettlebell",
   "Кор: планка / подъём ног":"core"
 };
-const exIcon = label => GLYPH[EX_ICON[label]] || GLYPH.kettlebell;
+// переопределение иконки для конкретных вариантов (где варианты — разный инвентарь)
+const VARIANT_ICON = {
+  "Тяга одной гири 16 в наклоне":"kettlebell",
+  "Тяга двух гирь 2×16 в наклоне":"kettlebell"
+};
+const exIcon = (label, variant) => GLYPH[VARIANT_ICON[variant] || EX_ICON[label]] || GLYPH.kettlebell;
 const SEC = {
   warmup:   _svg('<path d="M12 3c.6 2.5-1 3.6-1 5.6a2.4 2.4 0 0 0 4.8 0c0-.9-.3-1.7-.9-2.4 1.8 1.4 3.1 3.4 3.1 6.1a6 6 0 0 1-12 0c0-3.4 3-5.3 4-8 .9.4 1.7 1.1 2 2.1Z"/>'),
   cooldown: _svg('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>'),
@@ -810,7 +815,7 @@ function buildWorkout(week, dayIndex){
       name: nm,
       scheme: schemeFor(e.kind, b.idx, isDeload, isTest),
       tip: src.tip,
-      icon: exIcon(src.label),
+      icon: exIcon(src.label, nm),
       video: VARIANT_VIDEO[nm] || EXERCISE_VIDEO[src.label] || ""
     };
   });
