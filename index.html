@@ -3,139 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#4f46e5">
+<meta name="theme-color" content="#0b0b0c">
 <title>Тренировка на сегодня</title>
 <style>
   :root{
-    --bg:#f5f6f8;
-    --card:#ffffff;
-    --ink:#1f2430;
-    --muted:#6b7280;
-    --line:#e7e9ee;
-    --accent:#4f46e5;
-    --accent-soft:#eef0fe;
-    --good:#0f9d58;
-    --rest:#0ea5a4;
-    --radius:18px;
-    --shadow:0 6px 22px rgba(20,25,40,.06);
+    --bg:#0b0b0c;
+    --card:#161618;
+    --surface-2:#1f1f22;
+    --ink:#f5f5f7;
+    --muted:#9a9aa2;
+    --line:rgba(255,255,255,.08);
+    --accent:#00f19f;
+    --accent-2:#00c8ff;
+    --accent-soft:rgba(0,241,159,.12);
+    --good:#34d399;
+    --rest:#00c8ff;
+    --warn:#facc15;
+    --radius:20px;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+    --grad:linear-gradient(135deg,#00f19f,#00c8ff);
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,system-ui,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
   body{
     background:var(--bg);
     color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-family:var(--font);
     line-height:1.5;
-    padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 32px);
+    -webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 40px);
+    background-image:
+      radial-gradient(80% 50% at 100% -10%, rgba(0,241,159,.10), transparent 60%),
+      radial-gradient(70% 40% at 0% 0%, rgba(0,200,255,.06), transparent 55%);
+    background-attachment:fixed;
   }
   .wrap{max-width:640px;margin:0 auto;padding:clamp(14px,4vw,24px)}
 
-  header.top{margin-bottom:clamp(14px,3vw,20px)}
-  .kicker{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  h1{font-size:clamp(1.5rem,6vw,2rem);margin:.15em 0 .1em;line-height:1.15}
-  .date{color:var(--muted);font-size:.95rem;text-transform:capitalize}
-
-  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-  .badge{
-    background:var(--accent-soft);color:var(--accent);
-    font-size:.8rem;font-weight:600;padding:5px 11px;border-radius:999px;white-space:nowrap;
+  /* HERO */
+  header.top{
+    position:relative;margin:2px 0 18px;padding:22px 20px 20px;
+    border-radius:24px;border:1px solid var(--line);overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(0,241,159,.16), transparent 58%),
+      linear-gradient(180deg,#17191d,#0e0f12);
   }
-  .badge.alt{background:#eef7f6;color:var(--rest)}
-  .badge.warn{background:#fef3e6;color:#b46414}
+  .kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  h1{font-size:clamp(1.7rem,7.5vw,2.4rem);margin:.28em 0 .06em;line-height:1.04;letter-spacing:-.02em;font-weight:800}
+  .date{color:var(--muted);font-size:.95rem;text-transform:capitalize;font-weight:500}
+
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:.74rem;font-weight:700;letter-spacing:.02em;
+    padding:6px 12px;border-radius:999px;white-space:nowrap;
+    border:1px solid rgba(0,241,159,.22);
+  }
+  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .badge.alt{background:rgba(0,200,255,.12);color:var(--rest);border-color:rgba(0,200,255,.24)}
+  .badge.warn{background:rgba(250,204,21,.12);color:var(--warn);border-color:rgba(250,204,21,.26)}
 
   .card{
     background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-    padding:clamp(14px,4vw,20px);margin-bottom:14px;border:1px solid var(--line);
+    padding:clamp(15px,4vw,20px);margin-bottom:14px;border:1px solid var(--line);
   }
-  .card h2{font-size:1.05rem;margin:0 0 4px}
+  .card h2{font-size:1.05rem;margin:0 0 4px;letter-spacing:-.01em}
   .card .sub{color:var(--muted);font-size:.9rem;margin:0}
 
-  .rest-card{text-align:center;padding:24px 18px}
-  .rest-card .big{font-size:1.25rem;font-weight:700;margin:8px 0}
+  .rest-card{text-align:center;padding:26px 18px}
+  .rest-card .big{font-size:1.4rem;font-weight:800;margin:10px 0;letter-spacing:-.02em}
+  .rest-card .muted{color:var(--muted)}
 
-  .ex{padding:14px 0;border-bottom:1px solid var(--line)}
-  .ex:last-child{border-bottom:none;padding-bottom:2px}
-  .ex-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  .ex-name{font-weight:600;font-size:1.02rem}
-  .ex-scheme{
-    flex:none;background:#f0f1f5;color:var(--ink);font-weight:600;font-size:.85rem;
-    padding:4px 10px;border-radius:10px;white-space:nowrap;
+  /* EXERCISE CARD */
+  .ex{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
+    padding:14px 14px 4px;margin:10px 0;
   }
-  .ex-scheme.deload{background:#fef3e6;color:#b46414}
-  details.tip{margin-top:8px}
+  .ex:last-child{margin-bottom:2px}
+  .ex-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .ex-name{font-weight:700;font-size:1.05rem;letter-spacing:-.01em;min-width:0}
+  .ex-scheme{
+    flex:none;font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    color:var(--accent);background:rgba(0,241,159,.10);border:1px solid rgba(0,241,159,.3);
+    font-weight:700;font-size:.82rem;padding:6px 10px;border-radius:999px;white-space:nowrap;
+  }
+  .ex-scheme.deload{color:var(--warn);background:rgba(250,204,21,.10);border-color:rgba(250,204,21,.3)}
+  details.tip{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
   details.tip summary{
-    cursor:pointer;color:var(--accent);font-size:.88rem;font-weight:600;
-    list-style:none;display:inline-flex;align-items:center;gap:6px;user-select:none;
+    cursor:pointer;color:var(--muted);font-size:.86rem;font-weight:600;
+    list-style:none;display:inline-flex;align-items:center;gap:7px;user-select:none;
   }
   details.tip summary::-webkit-details-marker{display:none}
-  details.tip summary::before{content:"💡"}
-  details.tip[open] summary::before{content:"💡"}
-  details.tip p{margin:8px 0 0;color:var(--muted);font-size:.9rem}
+  details.tip summary::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  details.tip p{margin:8px 0 2px;color:var(--muted);font-size:.9rem}
+  a.video-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:.86rem;font-weight:700;text-decoration:none;margin:6px 0 12px}
+  a.video-link::before{content:"▶";font-size:.72em}
+  a.video-link:active{opacity:.6}
 
   .block-extra details{margin-top:0}
   details.section>summary{
-    cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;
+    cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center;letter-spacing:-.01em;
   }
   details.section>summary::-webkit-details-marker{display:none}
   details.section>summary .chev{color:var(--muted);transition:transform .2s}
   details.section[open]>summary .chev{transform:rotate(180deg)}
-  details.section .body{margin-top:12px;color:var(--muted);font-size:.93rem}
+  details.section .body{margin-top:14px;color:var(--muted);font-size:.93rem}
   details.section .body ul{margin:6px 0 0;padding-left:18px}
 
-  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
   button{
-    font:inherit;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;font-weight:600;
+    font:inherit;border:none;cursor:pointer;border-radius:14px;padding:10px 14px;font-weight:700;
+    transition:transform .12s ease, filter .12s ease, background .2s;
   }
-  .btn-primary{background:var(--accent);color:#fff;width:100%;padding:13px;font-size:1rem}
-  .btn-primary:active{filter:brightness(.94)}
-  .btn-ghost{background:#f0f1f5;color:var(--ink)}
-  .btn-ghost:active{background:#e6e8ee}
+  button:active{transform:scale(.97)}
+  .btn-primary{
+    background:var(--grad);color:#06231a;width:100%;padding:15px;font-size:1rem;letter-spacing:.01em;
+    box-shadow:0 8px 24px rgba(0,241,159,.22);
+  }
+  .btn-primary:active{filter:brightness(1.05)}
+  .btn-ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:active{background:#26262a}
 
-  /* Year overview */
-  .year-map .block-row{margin-bottom:10px}
-  .block-title{font-weight:600;font-size:.95rem;margin:4px 0 6px}
-  .weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+  /* Year heatmap */
+  .year-map .block-row{margin-bottom:14px}
+  .block-title{font-weight:700;font-size:.78rem;letter-spacing:.04em;margin:4px 0 8px;color:var(--muted);text-transform:uppercase}
+  .weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:5px}
   .wk{
-    background:#f3f4f7;border:1px solid var(--line);border-radius:10px;text-align:center;
-    padding:8px 0;font-size:.82rem;font-weight:600;color:var(--ink);
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    font-size:.72rem;font-weight:700;color:var(--muted);transition:transform .1s;
   }
-  .wk:active{background:var(--accent-soft)}
-  .wk.current{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .wk.deload{color:#b46414}
+  .wk:active{transform:scale(.92)}
+  .wk.past{background:rgba(0,241,159,.14);color:#bfe9da;border-color:rgba(0,241,159,.18)}
+  .wk.current{background:var(--accent);color:#06231a;border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,241,159,.35)}
+  .wk.deload{background:repeating-linear-gradient(45deg,#26262b 0 4px,#1a1a1e 4px 8px);color:var(--warn)}
 
-  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin-top:10px}
-  .legend span{display:inline-flex;align-items:center;gap:5px}
-  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
-  .dot.cur{background:var(--accent)}
-  .dot.dl{background:#f6b86a}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.78rem;margin-top:12px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid var(--line)}
+  .dot.cur{background:var(--accent);border-color:var(--accent)}
+  .dot.dl{background:repeating-linear-gradient(45deg,#26262b 0 3px,#1a1a1e 3px 6px)}
 
   .browsing-bar{
-    background:var(--accent-soft);color:var(--accent);border-radius:12px;
+    background:var(--accent-soft);color:var(--accent);border-radius:14px;border:1px solid rgba(0,241,159,.22);
     padding:10px 14px;display:flex;justify-content:space-between;align-items:center;
-    font-size:.9rem;font-weight:600;margin-bottom:14px;
+    font-size:.9rem;font-weight:700;margin-bottom:14px;
   }
-  .browsing-bar button{background:#fff;color:var(--accent);padding:7px 12px}
+  .browsing-bar button{background:var(--accent);color:#06231a;padding:7px 12px}
 
   .daytabs{display:flex;gap:6px;margin:10px 0 2px}
-  .daytab{flex:1;background:#f0f1f5;border-radius:10px;padding:8px;text-align:center;font-weight:600;font-size:.88rem;color:var(--muted)}
-  .daytab.active{background:var(--accent);color:#fff}
+  .daytab{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:9px;text-align:center;font-weight:700;font-size:.86rem;color:var(--muted)}
+  .daytab.active{background:var(--accent);color:#06231a;border-color:var(--accent)}
 
-  .foot{color:var(--muted);font-size:.8rem;text-align:center;margin-top:18px;line-height:1.6}
+  .foot{color:var(--muted);font-size:.8rem;text-align:center;margin-top:22px;line-height:1.7}
   label.field{display:block;margin:10px 0 4px;font-size:.85rem;color:var(--muted);font-weight:600}
-  input[type=date]{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;width:100%;background:#fff;color:var(--ink)}
+  input[type=date]{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:12px;width:100%;background:var(--surface-2);color:var(--ink);color-scheme:dark}
 
   /* Прогрессии / усложнение */
   details.subsec{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
-  details.subsec>summary{cursor:pointer;font-weight:600;color:var(--ink);list-style:none;user-select:none}
+  details.subsec>summary{cursor:pointer;font-weight:700;color:var(--ink);list-style:none;user-select:none}
   details.subsec>summary::-webkit-details-marker{display:none}
-  details.subsec>summary::before{content:"▸ ";color:var(--muted)}
-  details.subsec[open]>summary::before{content:"▾ "}
-  .prog-day{font-weight:700;font-size:.95rem;margin:14px 0 2px;color:var(--ink)}
-  .prog-ex{margin:8px 0 12px}
-  .prog-ex .nm{font-weight:600;font-size:.92rem;color:var(--ink);margin-bottom:3px}
+  details.subsec>summary::before{content:"▸ ";color:var(--accent)}
+  details.subsec[open]>summary::before{content:"▾ ";color:var(--accent)}
+  .prog-day{font-weight:800;font-size:.95rem;margin:16px 0 4px;color:var(--ink);letter-spacing:-.01em}
+  .prog-ex{margin:8px 0 14px}
+  .prog-ex .nm{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:3px}
   .prog-ex ol{margin:0;padding-left:20px;color:var(--muted);font-size:.9rem}
   .prog-ex ol li{margin:3px 0}
-  .prog-tag{color:var(--accent);font-weight:600;font-size:.78rem}
+  .prog-tag{color:var(--accent);font-weight:700;font-size:.74rem;text-transform:uppercase;letter-spacing:.03em}
+
+  /* Hero year progress */
+  .hero-progress{margin-top:16px}
+  .hero-progress .plabel{display:flex;justify-content:space-between;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .hero-progress .pbar{height:8px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden}
+  .hero-progress .pbar>i{display:block;height:100%;border-radius:999px;background:var(--grad);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+
+  /* Появление */
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  main>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+  main>*:nth-child(2){animation-delay:.05s}
+  main>*:nth-child(3){animation-delay:.1s}
+  main>*:nth-child(4){animation-delay:.15s}
+  main>*:nth-child(5){animation-delay:.2s}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -151,6 +203,7 @@
     <h1 id="title">Тренировка</h1>
     <div class="date" id="dateLine"></div>
     <div class="badges" id="badges"></div>
+    <div class="hero-progress" id="heroProgress"></div>
   </header>
 
   <main id="main"></main>
@@ -259,6 +312,89 @@
           </div>
         </div>
       </details>
+
+      <details class="subsec">
+        <summary>Калистеника / скилы (Calimove-style)</summary>
+        <div style="margin-top:10px">
+          <p style="margin:0 0 10px">Статические силовые элементы. Делай первым в тренировке, на свежие силы, короткими чистыми подходами. Прогресс месяцами — это норма.</p>
+          <div class="prog-ex">
+            <div class="nm">Стойка на руках (handstand)</div>
+            <a class="video-link" href="https://rutube.ru/video/0e655bc11483f19d77a4216503a891fc/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Стойка у стены носом к стене</li>
+              <li>Стойка у стены спиной + поиск баланса (отход от стены)</li>
+              <li>Свободная стойка (выход в баланс)</li>
+              <li>Отжимания в стойке у стены (HSPU)</li>
+              <li>Свободные отжимания в стойке (free HSPU)</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">Планш (planche)</div>
+            <a class="video-link" href="https://rutube.ru/video/c14703b4f59a083b3fdaa885bc1c6ad5/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Планш-наклон (planche lean) на паралетсах</li>
+              <li>Подтянутый планш (tuck planche)</li>
+              <li>Продвинутый tuck</li>
+              <li>Straddle-планш (ноги в стороны)</li>
+              <li>Полный планш (full planche)</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">Передний вис (front lever)</div>
+            <a class="video-link" href="https://rutube.ru/video/87bc132042055f03ac477d1a5f868304/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Подтянутый (tuck), копи удержание</li>
+              <li>Продвинутый tuck</li>
+              <li>Одна нога / straddle</li>
+              <li>Полный передний вис</li>
+              <li>Подтягивания в переднем висе (продвинуто)</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">Задний вис (back lever)</div>
+            <a class="video-link" href="https://rutube.ru/video/6405be70f4694bd583b784977fc9bb25/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Подтянутый (tuck)</li>
+              <li>Продвинутый tuck</li>
+              <li>Одна нога / straddle</li>
+              <li>Полный задний вис</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">Выход силой (muscle-up)</div>
+            <a class="video-link" href="https://rutube.ru/video/9741820157cddd7db66583724a9a1d7f/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Взрывные подтягивания (грудь к перекладине)</li>
+              <li>Негативы выхода (медленно вниз из упора)</li>
+              <li>Выход с резиной</li>
+              <li>Чистый выход на турнике</li>
+              <li>Выход на кольцах</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">L-sit → V-sit → Manna</div>
+            <a class="video-link" href="https://rutube.ru/video/5bd2f9ae5fdc46fafaa0845d571e6d21/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>L-sit с опорой ног на паралетсах</li>
+              <li>Подтянутый L-sit (tuck)</li>
+              <li>Полный L-sit</li>
+              <li>V-sit (ноги выше таза)</li>
+              <li>Manna (продвинуто)</li>
+            </ol>
+          </div>
+          <div class="prog-ex">
+            <div class="nm">Флажок (human flag)</div>
+            <a class="video-link" href="https://rutube.ru/video/6b9e1c47a3a0e433459ecfe148892888/" target="_blank" rel="noopener">Видео техники</a>
+            <ol>
+              <li>Вертикальный флажок (тело вверх)</li>
+              <li>Подтянутый (tuck)</li>
+              <li>Straddle (ноги в стороны)</li>
+              <li>Полный флажок</li>
+            </ol>
+            <p style="margin:4px 0 0;color:var(--muted);font-size:.85rem">Опора — вертикальная стойка шведской стенки.</p>
+          </div>
+        </div>
+      </details>
     </div>
   </details>
 
@@ -299,11 +435,55 @@ const SCHEMES = {
   core:      ["3×12–15","3×12–15","4×10–12","4×макс"]
 };
 
+// видео техники (RuTube — открывается в РФ без VPN); ключ = label упражнения
+const RT = id => "https://rutube.ru/video/"+id+"/";
+const EXERCISE_VIDEO = {
+  "Скил: передний вис (front lever)":  RT("87bc132042055f03ac477d1a5f868304"),
+  "Скил: флажок (human flag)":         RT("6b9e1c47a3a0e433459ecfe148892888"),
+  "Подтягивания (верт. тяга)":         RT("690e3232c3edd5eff117eb699dd63db2"),
+  "Тяга в наклоне / на кольцах":       RT("e680dbe798b8df06fa2f594bb129ed35"),
+  "Жим стоя (верт. жим)":              RT("194c0dd9093bbc7f51bd9754a1511d67"),
+  "Кор: ролик / L-sit":                RT("5bd2f9ae5fdc46fafaa0845d571e6d21"),
+  "Скил: стойка на руках (handstand)": RT("0e655bc11483f19d77a4216503a891fc"),
+  "Прыжковая сила (на куб)":           RT("f194eec1d9cf3887548df522df5b4946"),
+  "Свинг / рывок гири":                RT("88ebdb6109a078e52bd426dd65528230"),
+  "Присед / выпады":                   RT("aa44b920fd2664ef3a28756030337157"),
+  "Турецкий подъём":                   RT("6c14e324267ed0018c08eaa4469c2ca6"),
+  "Скил: планш (planche)":             RT("c14703b4f59a083b3fdaa885bc1c6ad5"),
+  "Отжимания на кольцах":              RT("b3f14dd8bd367303a21f681a6ea53e73"),
+  "Отжимания вниз (паралетсы/кольца)": RT("4e8254ad3f5d5dc7561481b9eec6ea9a"),
+  "Толчок гири":                       RT("e57b04d3cd5dad1898401e4925d3ac73"),
+  "Кор: планка / подъём ног":          RT("b8dae93a6974afeebd7d356c6ef08047")
+};
+
+// переопределение видео для конкретных вариантов (упражнения, где варианты — разные движения)
+const VARIANT_VIDEO = {
+  "Ролик для пресса с колен":                RT("73006a38b9c5cce2ca96f54e8af878fd"),
+  "Ролик стоя (негативы) + L-sit удержание": RT("73006a38b9c5cce2ca96f54e8af878fd"),
+  "Поджимание коленей в висе на турнике":    RT("b8dae93a6974afeebd7d356c6ef08047"),
+  "Рывок гири 16 (snatch)":                  RT("022cd5547b8a5b1cbd36593001c86dd6"),
+  "Рывок 16 на повторы / комбо 2×16":        RT("022cd5547b8a5b1cbd36593001c86dd6"),
+  "Болгарские выпады с гирей 16":            RT("2e8e3a1549e4bc5c4cf99af7725cc58b"),
+  "Планка 3×40 сек + скручивания":           RT("006fb9a23e9166d147c8f8e41ce61e43")
+};
+
 // каждый вариант — по одному на блок 1..4; tip — подсказка по технике
 const DAYS = [
   {
     code:"A", name:"Верх — тяга-акцент",
     ex:[
+      {kind:"skill", label:"Скил: передний вис (front lever)", variants:[
+        "Передний вис «подтянутый» (tuck), 5–10 сек",
+        "Передний вис: продвинутый tuck",
+        "Передний вис: одна нога / straddle",
+        "Передний вис: полный (копи удержание)"],
+        tip:"Руки прямые, лопатки и таз подкручены, тело как доска, короткие чистые подходы. Скил недели чередуется: нечётные недели — передний вис, чётные — флажок.",
+        alt:{label:"Скил: флажок (human flag)", variants:[
+          "Флажок: вертикальный (тело вверх по стенке)",
+          "Флажок: подтянутый (tuck)",
+          "Флажок: straddle (ноги в стороны)",
+          "Флажок: полный (копи удержание)"],
+          tip:"Нижняя рука толкает, верхняя тянет, корпус жёсткий, по подходу на каждую сторону. Опора — стойка шведской стенки. Скил недели чередуется: чётные недели — флажок, нечётные — передний вис."}},
       {kind:"reps", label:"Подтягивания (верт. тяга)", variants:[
         "Подтягивания (полные, чисто)",
         "Подтягивания с паузой 1 сек вверху",
@@ -333,6 +513,12 @@ const DAYS = [
   {
     code:"B", name:"Низ + баллистика",
     ex:[
+      {kind:"skill", label:"Скил: стойка на руках (handstand)", variants:[
+        "Стойка у стены носом, 20–30 сек",
+        "Стойка у стены спиной + поиск баланса",
+        "Свободная стойка (выход в баланс)",
+        "Отжимания в стойке у стены (HSPU)"],
+        tip:"Руки прямые, пальцы активно «гребут» пол, тело вытянуто, рёбра не вываливай. На день ног верх свежий — поэтому скил здесь. Падать учись уходом в сторону/кувырком."},
       {kind:"plyo", label:"Прыжковая сила (на куб)", variants:[
         "Запрыгивания на куб (мягко)",
         "Запрыгивания выше + пауза в приседе",
@@ -362,6 +548,12 @@ const DAYS = [
   {
     code:"C", name:"Верх — жим-акцент",
     ex:[
+      {kind:"skill", label:"Скил: планш (planche)", variants:[
+        "Планш-наклон (planche lean) на паралетсах",
+        "Планш «подтянутый» (tuck)",
+        "Планш: продвинутый tuck",
+        "Планш: straddle (копи удержание)"],
+        tip:"Плечи протолкни вперёд за кисти, локти прямые, таз подкручен. Паралетсы берегут запястья. Прогресс очень медленный — это норма, делай первым на свежие силы."},
       {kind:"reps", label:"Отжимания на кольцах", variants:[
         "Отжимания на кольцах (кольца у пола)",
         "Отжимания на кольцах + лёгкое разведение",
@@ -491,11 +683,16 @@ function buildWorkout(week, dayIndex){
   const blockName = isTest ? "Разгрузка и тест" : BLOCKS[b.idx].name;
   const blockFocus = isTest ? "Лёгкая работа и проверка результата перед новым кругом." : BLOCKS[b.idx].focus;
 
-  const exercises = day.ex.map(e=>({
-    name: e.variants[variantIdx],
-    scheme: schemeFor(e.kind, b.idx, isDeload, isTest),
-    tip: e.tip
-  }));
+  const exercises = day.ex.map(e=>{
+    const src = (e.alt && week%2===0) ? e.alt : e; // чередуем скил по чётности недели
+    const nm = src.variants[variantIdx];
+    return {
+      name: nm,
+      scheme: schemeFor(e.kind, b.idx, isDeload, isTest),
+      tip: src.tip,
+      video: VARIANT_VIDEO[nm] || EXERCISE_VIDEO[src.label] || ""
+    };
+  });
 
   return {
     code:day.code, dayName:day.name,
@@ -550,6 +747,11 @@ function render(){
   if(w.isDeload) addBadge("Разгрузка", "warn");
   if(w.isTest) addBadge("Тест", "warn");
 
+  // прогресс по году в герое
+  const hp=document.getElementById("heroProgress");
+  const pct=Math.round(week/52*100);
+  hp.innerHTML=`<div class="plabel"><span>Прогресс года</span><span>${week} / 52</span></div><div class="pbar"><i style="width:${pct}%"></i></div>`;
+
   // основная часть
   const main = document.getElementById("main");
   main.innerHTML="";
@@ -596,6 +798,7 @@ function render(){
         <span class="ex-scheme${w.isDeload?' deload':''}">${e.scheme}</span>
       </div>
       <details class="tip"><summary>Техника</summary><p>${e.tip}</p></details>
+      ${e.video?`<div><a class="video-link" href="${e.video}" target="_blank" rel="noopener">Видео техники</a></div>`:""}
     `;
     exCard.appendChild(ex);
   });
@@ -651,7 +854,7 @@ function renderYearMap(currentWeek, browseHighlight){
       const b=blockInfo(wk);
       const dl = b.idx!=="test" && (b.within%4===0);
       const cell=document.createElement("div");
-      cell.className="wk"+(dl?" deload":"")+((wk===currentWeek)?" current":"")+((browseHighlight===wk)?" current":"");
+      cell.className="wk"+(dl?" deload":"")+(wk<currentWeek?" past":"")+((wk===currentWeek)?" current":"")+((browseHighlight===wk)?" current":"");
       cell.textContent=wk;
       cell.onclick=()=>{browseWeek=wk;browseDay=0;render();window.scrollTo({top:0,behavior:"smooth"});};
       grid.appendChild(cell);
@@ -677,11 +880,16 @@ function renderProgressionsFromProgram(){
   DAYS.forEach(day=>{
     html+=`<div class="prog-day">День ${day.code} · ${day.name}</div>`;
     day.ex.forEach(e=>{
-      html+=`<div class="prog-ex"><div class="nm">${e.label}</div><ol>`;
-      e.variants.forEach((v,i)=>{
-        html+=`<li><span class="prog-tag">Блок ${i+1}</span> ${v}</li>`;
+      [e, e.alt].filter(Boolean).forEach(x=>{
+        html+=`<div class="prog-ex"><div class="nm">${x.label}</div><ol>`;
+        x.variants.forEach((v,i)=>{
+          html+=`<li><span class="prog-tag">Блок ${i+1}</span> ${v}</li>`;
+        });
+        html+=`</ol>`;
+        const vurl=EXERCISE_VIDEO[x.label];
+        if(vurl) html+=`<a class="video-link" href="${vurl}" target="_blank" rel="noopener">Видео техники</a>`;
+        html+=`</div>`;
       });
-      html+=`</ol></div>`;
     });
   });
   host.innerHTML=html;
