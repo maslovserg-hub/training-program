@@ -1,5 +1,5 @@
 // Service worker: кэширует приложение для офлайн-работы.
-const CACHE = 'training-v3';
+const CACHE = 'training-v4';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './athlete-kb.webp', './athlete-run.webp'];
 
 self.addEventListener('install', (e) => {
@@ -17,6 +17,20 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // HTML-страница: сначала сеть (всегда свежая), кэш — офлайн-запас.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then((resp) => {
+          const copy = resp.clone();
+          caches.open(CACHE).then((c) => c.put('./index.html', copy));
+          return resp;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+  // Статика: сначала кэш, иначе сеть.
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request))
   );
