@@ -939,8 +939,8 @@ function render(){
   // заминка
   main.appendChild(sectionCard("Заминка", COOLDOWN, SEC.cooldown));
 
-  if(browsing){
-    // переключатель дней A/B/C при просмотре
+  {
+    // переключатель дней A/B/C (всегда виден)
     const tabs=document.createElement("div");
     tabs.className="card";
     tabs.innerHTML="<p class='sub' style='margin-bottom:8px'>День недели</p>";
@@ -949,7 +949,20 @@ function render(){
       const t=document.createElement("div");
       t.className="daytab"+(i===dayIndex?" active":"");
       t.textContent="День "+d.code;
-      t.onclick=()=>{withTransition(()=>{browseDay=i;render();});window.scrollTo({top:0,behavior:"smooth"});};
+      t.onclick=()=>{
+        if(i===dayIndex && !browsing) return; // уже на этом дне в режиме «сегодня»
+        withTransition(()=>{
+          if(browsing){
+            browseDay=i;
+          } else {
+            // из режима «сегодня» переходим в просмотр той же недели
+            browseWeek=dec.week;
+            browseDay=i;
+          }
+          render();
+        });
+        window.scrollTo({top:0,behavior:"smooth"});
+      };
       row.appendChild(t);
     });
     tabs.appendChild(row);
