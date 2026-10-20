@@ -24,25 +24,54 @@
   input[type=date]{color-scheme:dark}
   @keyframes notifIn{from{transform:translateY(-120%);opacity:0}to{transform:none;opacity:1}}
   @keyframes sheetIn{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+  @keyframes sheetOut{to{transform:translateY(24px);opacity:0}}
+  @keyframes notifOut{to{transform:translateY(-120%);opacity:0}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeOut{to{opacity:0}}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes sheetDown{to{transform:translateY(100%)}}
+  @keyframes fadeUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  @keyframes stepIn{from{transform:translateX(28px);opacity:0}to{transform:none;opacity:1}}
+  /* Нажатие и смена состояний — плавно (iOS-подобная обратная связь) */
+  button{transition:transform .15s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease,opacity .2s ease}
+  button:active{transform:scale(.97)}
+  .fx{animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) both}
+  .stepfx{animation:stepIn .32s cubic-bezier(.2,.8,.2,1) both}
+  /* полосы прокрутки скрыты, прокрутка пальцем/колесом остаётся */
+  .pane,.ov [style*="overflow-y:auto"]{scrollbar-width:none}
+  .pane::-webkit-scrollbar,.ov ::-webkit-scrollbar{display:none}
 
   #app{position:relative;height:100vh;height:100dvh;max-width:520px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);line-height:1.5;overflow:hidden}
-  #main{flex:1;overflow-y:auto;overflow-x:hidden;background-image:radial-gradient(80% 40% at 100% -10%,rgba(245,130,31,.12),transparent 60%),radial-gradient(70% 30% at 0% 0%,rgba(90,169,230,.06),transparent 55%)}
-  #nav{flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:10px 4px calc(14px + env(safe-area-inset-bottom,0px));background:#121214;border-top:1px solid rgba(255,255,255,.06)}
-  #nav button{background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0}
-  #nav .pill{width:60px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:background .25s}
-  #nav img{width:22px;height:22px}
-  #nav .lab{font-size:12px;letter-spacing:.01em}
+  #main{flex:1;position:relative;overflow:hidden;background-image:radial-gradient(80% 40% at 100% -10%,rgba(245,130,31,.12),transparent 60%),radial-gradient(70% 30% at 0% 0%,rgba(90,169,230,.06),transparent 55%)}
+  #track{display:flex;height:100%;transition:transform .42s cubic-bezier(.22,.9,.28,1);will-change:transform}
+  .pane{flex:0 0 100%;min-width:0;height:100%;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior:contain}
+  #nav{position:relative;flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:10px 4px calc(14px + env(safe-area-inset-bottom,0px));background:#121214;border-top:1px solid rgba(255,255,255,.06)}
+  #nav button{position:relative;z-index:1;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;color:var(--muted)}
+  #nav .pill{position:relative;width:60px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+  #nav img{position:absolute;top:5px;left:19px;width:22px;height:22px;transition:opacity .25s ease}
+  #nav .i-on{opacity:0} #nav button.on .i-on{opacity:1} #nav button.on .i-off{opacity:0}
+  #nav .lab{font-size:12px;letter-spacing:.01em;font-weight:500}
+  #nav button.on{color:var(--ink)} #nav button.on .lab{font-weight:700}
+  #navInd{position:absolute;top:10px;left:0;width:60px;height:32px;border-radius:16px;background:rgba(245,130,31,.16);transition:transform .42s cubic-bezier(.22,.9,.28,1);pointer-events:none}
 
   .ov{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
   .ov.on{display:flex}
   #sheet{z-index:30;animation:sheetIn .28s cubic-bezier(.2,.8,.2,1) both}
-  #wk{z-index:20;background-image:radial-gradient(90% 45% at 50% 0%,rgba(245,130,31,.14),transparent 70%)}
+  #sheet.out{animation:sheetOut .22s ease both}
+  .out{pointer-events:none}
+  #wk{z-index:20;animation:sheetIn .32s cubic-bezier(.2,.8,.2,1) both;background-image:radial-gradient(90% 45% at 50% 0%,rgba(245,130,31,.14),transparent 70%)}
+  #wk.out{animation:sheetOut .24s ease both}
   #rest{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;justify-content:flex-end;background:rgba(5,5,6,.55)}
-  #rest.on{display:flex}
-  #rest .panel{background:var(--card);border-top:1px solid rgba(255,255,255,.1);border-radius:28px 28px 0 0;padding:14px 20px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;box-shadow:0 -20px 40px rgba(0,0,0,.5);animation:sheetIn .25s ease both}
+  #rest.on{display:flex;animation:fadeIn .25s ease both}
+  #rest.out{animation:fadeOut .26s ease both}
+  #rest .panel{background:var(--card);border-top:1px solid rgba(255,255,255,.1);border-radius:28px 28px 0 0;padding:14px 20px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;box-shadow:0 -20px 40px rgba(0,0,0,.5);animation:sheetUp .38s cubic-bezier(.22,.9,.28,1) both}
+  #rest.out .panel{animation:sheetDown .26s ease both}
+  #onb.out{animation:fadeOut .3s ease both}
   #onb{z-index:50;background-image:radial-gradient(90% 50% at 50% 0%,rgba(245,130,31,.16),transparent 70%)}
   #notif{cursor:pointer;position:absolute;top:6px;left:8px;right:8px;z-index:60;background:#232327;border-radius:24px;padding:14px 16px;display:none;gap:12px;align-items:flex-start;box-shadow:0 16px 40px rgba(0,0,0,.6);animation:notifIn .35s cubic-bezier(.2,.8,.2,1) both}
   #notif.on{display:flex}
+  #notif.out{animation:notifOut .25s ease both}
+  @media (prefers-reduced-motion:reduce){*,::before,::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
   .pad{padding:20px 16px 24px}
   .card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:14px;border:1px solid var(--line)}
@@ -63,7 +92,18 @@
   .acc-ic{flex:none;width:32px;height:32px;border-radius:10px;background:rgba(245,130,31,.13);display:flex;align-items:center;justify-content:center}
   .acc-ic img{width:18px;height:18px}
   .chev{color:var(--muted);display:inline-block;transition:transform .2s}
-  .chev.up{transform:rotate(180deg)}
+  details[open]>summary .chev{transform:rotate(180deg)}
+  /* Плавное раскрытие всех details (совр. браузеры; иначе — мгновенно, без поломки) */
+  html{interpolate-size:allow-keywords}
+  details::details-content{block-size:0;overflow:hidden;transition:block-size .55s cubic-bezier(.33,1,.68,1),content-visibility .55s allow-discrete}
+  details[open]::details-content{block-size:auto}
+  summary{list-style:none} summary::-webkit-details-marker{display:none}
+  .tg{flex:none;position:relative;width:30px;height:30px;border-radius:50%;margin-top:1px;border:1px solid var(--line);background:transparent;transition:background .25s ease,border-color .25s ease}
+  .tg i{position:absolute;top:50%;left:50%;width:12px;height:2px;border-radius:2px;background:var(--muted);transform:translate(-50%,-50%);transition:opacity .25s ease,background .25s ease,transform .3s ease}
+  .tg i.v{width:2px;height:12px}
+  details[open] .tg{background:var(--acc);border-color:var(--acc)}
+  details[open] .tg i{background:var(--on)}
+  details[open] .tg i.v{opacity:0;transform:translate(-50%,-50%) rotate(90deg)}
   .scheme{font-family:var(--mono);font-weight:700;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;color:var(--acc);background:rgba(245,130,31,.12);border:1px solid rgba(245,130,31,.35)}
   .scheme.dl{color:var(--blue);background:rgba(90,169,230,.12);border-color:rgba(90,169,230,.35)}
   .ready-tag{color:var(--blue);background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.35);font-weight:700;font-size:12px;padding:5px 10px;border-radius:999px;white-space:nowrap}
@@ -91,7 +131,7 @@
   .hint-blue{background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.3);border-radius:16px;padding:14px 16px;margin-bottom:14px}
   ol.list{margin:0;padding-left:20px;color:var(--muted);font-size:14px} ol.list li{margin:3px 0}
   .small-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:8px}
-  .wk-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:700;padding:0;line-height:1;transition:transform .1s}
+  .wk-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:700;padding:0;line-height:1;transition:transform .1s,background-color .25s,color .25s}
   .wk-cell:active{transform:scale(.92)}
   .wk-cell .dots{display:flex;gap:3px} .wk-cell .dots i{width:5px;height:5px;border-radius:50%}
   .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;margin:4px 0 18px}
@@ -103,8 +143,8 @@
 </head>
 <body>
 <div id="app">
-  <div id="main"></div>
-  <nav id="nav"></nav>
+  <div id="main"><div id="track"><div class="pane" data-tab="today"></div><div class="pane" data-tab="program"></div><div class="pane" data-tab="prog"></div><div class="pane" data-tab="settings"></div></div></div>
+  <nav id="nav"><i id="navInd"></i></nav>
   <div id="sheet" class="ov"></div>
   <div id="wk" class="ov"><div id="wkInner" style="display:flex;flex-direction:column;flex:1;min-height:0"></div><div id="rest"></div></div>
   <div id="onb" class="ov"></div>
@@ -273,7 +313,9 @@ const S={
 };
 function set(p){Object.assign(S,p);render();}
 function setWk(p){Object.assign(S.wk,p);S.now=Date.now();render();}
-function toTop(){document.getElementById('main').scrollTop=0;}
+const TABS=['today','program','prog','settings'];
+const pane=t=>document.querySelector(`.pane[data-tab="${t}"]`);
+function toTop(t,smooth){pane(t||S.tab).scrollTo({top:0,behavior:smooth?'smooth':'auto'});}
 
 /* ================= ЗВУК / ВИБРАЦИЯ ================= */
 let AC=null;
@@ -380,12 +422,12 @@ function viewToday(c){
   if(w.isTest)badges.push({t:'Тест',...BLU});
   const pv=decode(Math.max(0,sess.idx-1)),pw=build(pv.week,pv.dayIndex);
   let h='<div style="padding:12px 16px 24px">';
-  if(browsing)h+=`<div style="background:rgba(245,130,31,.13);color:var(--acc);border-radius:14px;border:1px solid rgba(245,130,31,.28);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;margin-bottom:14px"><span>Просмотр · неделя ${week}</span><button data-a="backToday" style="flex:none;white-space:nowrap;background:var(--acc);color:var(--on);padding:7px 12px;border-radius:12px;font-weight:700">← К сегодня</button></div>`;
-  if(missed)h+=`<div style="background:var(--card);border:1px solid rgba(90,169,230,.3);border-radius:18px;padding:14px 16px;margin-bottom:14px">
+  if(browsing)h+=`<div data-key="browse" class="fx" style="background:rgba(245,130,31,.13);color:var(--acc);border-radius:14px;border:1px solid rgba(245,130,31,.28);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;margin-bottom:14px"><span>Просмотр · неделя ${week}</span><button data-a="backToday" style="flex:none;white-space:nowrap;background:var(--acc);color:var(--on);padding:7px 12px;border-radius:12px;font-weight:700">← К сегодня</button></div>`;
+  if(missed)h+=`<div data-key="missed" class="fx" style="background:var(--card);border:1px solid rgba(90,169,230,.3);border-radius:18px;padding:14px 16px;margin-bottom:14px">
     <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;width:32px;height:32px;border-radius:10px;background:rgba(90,169,230,.14);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:900">!</span>
     <div style="min-width:0;flex:1"><div style="font-weight:700">Пропущена тренировка</div><div class="sub">${esc(missed.line)}</div></div></div>
     <div style="display:flex;gap:8px;margin-top:12px"><button data-a="catchUp" style="flex:1;background:var(--blue);color:var(--bg);border-radius:12px;padding:10px;font-weight:700;font-size:14px">Нагнать сегодня</button><button data-a="dismissMissed" class="ghost" style="flex:1;border-radius:12px;padding:10px;font-size:14px">Пропустить</button></div></div>`;
-  h+=`<header style="position:relative;margin:2px 0 14px;padding:22px 122px 20px 20px;min-height:226px;border-radius:24px;border:1px solid var(--line);overflow:hidden;isolation:isolate;background:radial-gradient(58% 78% at 86% 60%,rgba(245,140,45,.5),rgba(245,130,31,.16) 46%,transparent 72%),radial-gradient(120% 90% at 100% 0%,rgba(245,130,31,.16),transparent 60%),linear-gradient(180deg,#17191d,#0e0f12)">
+  h+=`<header data-key="hero" style="position:relative;margin:2px 0 14px;padding:22px 122px 20px 20px;min-height:226px;border-radius:24px;border:1px solid var(--line);overflow:hidden;isolation:isolate;background:radial-gradient(58% 78% at 86% 60%,rgba(245,140,45,.5),rgba(245,130,31,.16) 46%,transparent 72%),radial-gradient(120% 90% at 100% 0%,rgba(245,130,31,.16),transparent 60%),linear-gradient(180deg,#17191d,#0e0f12)">
     <img src="${rest?'athlete-run.webp':'athlete-kb.webp'}" alt="" style="position:absolute;right:-6px;bottom:0;max-height:232px;max-width:172px;z-index:0;pointer-events:none;filter:brightness(1.14) contrast(1.05) drop-shadow(0 0 16px rgba(255,165,75,.5))">
     <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#15171c 42%,rgba(21,23,28,.42) 60%,rgba(21,23,28,0) 74%)"></div>
     <div style="position:relative;z-index:2">
@@ -394,10 +436,10 @@ function viewToday(c){
       <div style="color:var(--muted);font-size:15px;font-weight:500;text-transform:capitalize">${browsing?'':fmtDate(new Date())}</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">${badges.map(b=>`<span style="display:inline-flex;align-items:center;gap:6px;background:${b.bg};color:${b.color};font-size:12px;font-weight:700;letter-spacing:.02em;padding:6px 12px;border-radius:999px;white-space:nowrap;border:1px solid ${b.border}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>${esc(b.t)}</span>`).join('')}</div>
       <div style="margin-top:16px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:7px"><span>Прогресс года</span><span>${week} / 52</span></div>
-      <div style="height:8px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden"><i style="display:block;height:100%;border-radius:999px;background:var(--grad);width:${Math.round(week/52*100)}%"></i></div></div>
+      <div style="height:8px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden"><i style="display:block;height:100%;border-radius:999px;background:var(--grad);width:${Math.round(week/52*100)}%;transition:width .8s cubic-bezier(.2,.8,.2,1)"></i></div></div>
     </div></header>`;
   if(rest){
-    h+=`<div class="card shadow" style="padding:26px 18px;text-align:center">
+    h+=`<div data-key="rest" class="card shadow fx" style="padding:26px 18px;text-align:center">
       <div class="muted">Восстанавливайся 💆</div>
       <div style="font-size:22px;font-weight:800;margin:10px 0;letter-spacing:-.02em">Сегодня день отдыха</div>
       <div class="muted" style="font-size:15px">Следующая по графику: ${fmtDate(sess.refDate)} · День ${w.code}</div>
@@ -405,40 +447,37 @@ function viewToday(c){
       <div class="sub" style="margin-top:10px">Пропустил тренировку и хочешь нагнать сегодня — открой её здесь.</div></div>`;
     return h+'</div>';
   }
-  if(browsing)h+=`<div style="display:flex;gap:6px;margin:0 0 14px">${DAYS.map((d,i)=>{const a=i===c.di;return `<button data-a="day" data-i="${i}" style="flex:1;background:${a?'var(--acc)':'var(--s2)'};border:1px solid ${a?'var(--acc)':'var(--line)'};border-radius:12px;padding:9px;font-weight:700;font-size:14px;color:${a?'var(--on)':'var(--muted)'}">День ${d.code}</button>`;}).join('')}</div>`;
-  if(logged)h+=`<div style="display:flex;align-items:center;gap:12px;background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.3);border-radius:16px;padding:14px 16px;margin-bottom:14px"><span class="ok-ic" style="background:var(--blue);color:var(--bg)">✓</span><div style="min-width:0"><div style="font-weight:700">Тренировка выполнена</div><div class="sub">${logged.dur} мин · ${logged.sets} подходов</div></div></div>`;
-  h+=`<button data-a="startWk" class="primary" style="display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.01em;border-radius:18px;margin-bottom:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2a1602"><path d="M7 4.5v15l12-7.5z"></path></svg>${logged?'Пройти ещё раз':browsing?'Начать эту тренировку':'Начать тренировку'}</button>`;
+  if(browsing)h+=`<div data-key="days" class="fx" style="display:flex;gap:6px;margin:0 0 14px">${DAYS.map((d,i)=>{const a=i===c.di;return `<button data-a="day" data-i="${i}" style="flex:1;background:${a?'var(--acc)':'var(--s2)'};border:1px solid ${a?'var(--acc)':'var(--line)'};border-radius:12px;padding:9px;font-weight:700;font-size:14px;color:${a?'var(--on)':'var(--muted)'}">День ${d.code}</button>`;}).join('')}</div>`;
+  if(logged)h+=`<div data-key="done" class="fx" style="display:flex;align-items:center;gap:12px;background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.3);border-radius:16px;padding:14px 16px;margin-bottom:14px"><span class="ok-ic" style="background:var(--blue);color:var(--bg)">✓</span><div style="min-width:0"><div style="font-weight:700">Тренировка выполнена</div><div class="sub">${logged.dur} мин · ${logged.sets} подходов</div></div></div>`;
+  h+=`<button data-key="start" data-a="startWk" class="primary" style="display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.01em;border-radius:18px;margin-bottom:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2a1602"><path d="M7 4.5v15l12-7.5z"></path></svg>${logged?'Пройти ещё раз':browsing?'Начать эту тренировку':'Начать тренировку'}</button>`;
   h+=`<div class="card shadow"><h2 class="h2">${esc(w.blockName)}</h2><p class="p">${esc(w.blockFocus)}</p></div>`;
   h+=accordion('warm','Разминка',ICON.warmup,S.openWarm,WARMUP);
   h+=`<div class="card shadow"><h2 class="h2">Основная часть</h2><p class="p">Отдых между подходами 1.5–3 мин. Техника важнее веса.</p>`;
   w.exercises.forEach((e,i)=>{
     const open=S.openEx===i,ll=lastLine(e);
-    h+=`<div style="background:var(--s2);border:1px solid var(--line);border-radius:16px;margin:12px 0 0;overflow:hidden;box-shadow:0 4px 16px -10px rgba(0,0,0,.6)">
-      <div data-a="ex" data-i="${i}" style="display:flex;align-items:flex-start;gap:12px;padding:14px;cursor:pointer;user-select:none">
+    h+=`<details name="acc" data-t="ex" data-i="${i}"${open?' open':''} style="background:var(--s2);border:1px solid var(--line);border-radius:16px;margin:12px 0 0;overflow:hidden;box-shadow:0 4px 16px -10px rgba(0,0,0,.6)">
+      <summary style="display:flex;align-items:flex-start;gap:12px;padding:14px;cursor:pointer;user-select:none">
         <span style="flex:none;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;background:var(--s3);border:1px solid var(--line)"><img src="${e.icon}" alt="" style="width:38px;height:38px"></span>
         <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
           <span style="display:flex;align-items:flex-start;gap:10px">
             <span style="flex:1;min-width:0;font-weight:700;font-size:16px;letter-spacing:-.01em;line-height:1.35;overflow-wrap:break-word">${esc(e.name)}</span>
-            <span style="flex:none;position:relative;width:30px;height:30px;border-radius:50%;margin-top:1px;border:1px solid ${open?'var(--acc)':'var(--line)'};background:${open?'var(--acc)':'transparent'}">
-              <span style="position:absolute;top:50%;left:50%;width:12px;height:2px;border-radius:2px;background:${open?'var(--on)':'var(--muted)'};transform:translate(-50%,-50%)"></span>
-              <span style="position:absolute;top:50%;left:50%;width:2px;height:12px;border-radius:2px;background:${open?'var(--on)':'var(--muted)'};opacity:${open?0:1};transform:translate(-50%,-50%)"></span>
-            </span>
+            <span class="tg"><i></i><i class="v"></i></span>
           </span>
-          <span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="scheme${dlc(w.isDeload)}">${esc(e.scheme)}</span>${ready(e)?'<span class="ready-tag">↑ Пора усложнить</span>':''}</span>
+          <span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="scheme${dlc(w.isDeload)}">${esc(e.scheme)}</span>${ready(e)?'<span class="ready-tag fx">↑ Пора усложнить</span>':''}</span>
           ${ll?`<span style="color:var(--muted);font-size:12.5px;margin-top:-4px">Прошлый раз: <span class="mono" style="color:var(--soft)">${esc(ll)}</span></span>`:''}
         </span>
-      </div>
-      ${open?`<div style="padding:0 14px 14px"><p style="margin:0 0 12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:14.5px">${esc(e.tip)}</p>
+      </summary>
+      <div style="padding:0 14px 14px"><p style="margin:0 0 12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:14.5px">${esc(e.tip)}</p>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">${e.video?`<a class="vid" href="${e.video}" target="_blank" rel="noopener"><i>▶</i>Видео техники</a>`:''}
-        <button data-a="sheet" data-di="${c.di}" data-ei="${i}" data-w="${week}" style="background:var(--s3);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:13.5px;margin-left:auto">Подробнее →</button></div></div>`:''}
-    </div>`;
+        <button data-a="sheet" data-di="${c.di}" data-ei="${i}" data-w="${week}" style="background:var(--s3);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:13.5px;margin-left:auto">Подробнее →</button></div></div>
+    </details>`;
   });
   h+='</div>';
   h+=accordion('cool','Заминка',ICON.cooldown,S.openCool,COOLDOWN);
   return h+'</div>';
 }
 function accordion(k,title,ic,open,body){
-  return `<div class="card shadow" style="padding:16px 18px"><div class="acc-head" data-a="${k}"><span><span class="acc-ic"><img src="${ic}" alt=""></span>${title}</span><span class="chev${open?' up':''}">▾</span></div>${open?`<div class="muted" style="margin-top:14px;font-size:15px">${esc(body)}</div>`:''}</div>`;
+  return `<details name="acc" data-t="${k}"${open?' open':''} class="card shadow" style="padding:16px 18px"><summary class="acc-head"><span><span class="acc-ic"><img src="${ic}" alt=""></span>${title}</span><span class="chev">▾</span></summary><div class="muted" style="margin-top:14px;font-size:15px">${esc(body)}</div></details>`;
 }
 
 function viewProgram(c){
@@ -472,13 +511,13 @@ function viewProgram(c){
       <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px">${cells}</div></div>`;
   }
   h+=`<div class="legend"><span><i style="width:11px;height:11px;border-radius:4px;background:var(--acc)"></i>текущая неделя</span><span><i style="width:6px;height:6px;border-radius:50%;background:var(--acc)"></i>выполнено</span><span><i style="width:6px;height:6px;border-radius:50%;box-shadow:inset 0 0 0 1.2px var(--blue)"></i>пропущено</span><span><i style="width:11px;height:11px;border-radius:4px;border:1px solid var(--line);background:repeating-linear-gradient(45deg,#26262b 0 3px,#1a1a1e 3px 6px)"></i>разгрузка</span></div>`;
-  h+=`<div class="card" style="padding:16px 18px;margin-bottom:0"><div class="acc-head" data-a="how"><span><span class="acc-ic"><img src="${icon(SEC.how,'#f5821f')}" alt=""></span>Как это работает</span><span class="chev${S.openHow?' up':''}">▾</span></div>
-    ${S.openHow?`<ul style="margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14.5px;display:flex;flex-direction:column;gap:6px">
+  h+=`<details name="acc" data-t="how"${S.openHow?' open':''} class="card" style="padding:16px 18px;margin-bottom:0"><summary class="acc-head"><span><span class="acc-ic"><img src="${icon(SEC.how,'#f5821f')}" alt=""></span>Как это работает</span><span class="chev">▾</span></summary>
+    <ul style="margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14.5px;display:flex;flex-direction:column;gap:6px">
       <li><b style="color:var(--ink)">Прогрессия калистеники:</b> делаешь вариант, который можешь чисто. Дошёл до верха повторов во всех подходах 2 тренировки подряд → следующий вариант.</li>
       <li><b style="color:var(--ink)">Прогрессия гири:</b> работаешь в диапазоне повторов. Добил верх во всех подходах → усложняй вариант (одноручный → двойной → темп). Тяжелее 16 кг не нужно.</li>
       <li><b style="color:var(--ink)">Разгрузка:</b> каждая 4-я неделя блока — 2 подхода, без отказа. Это часть прогресса, связки восстанавливаются.</li>
       <li><b style="color:var(--ink)">Тест:</b> недели 49–52 — лёгкая работа и проверка результата перед новым годовым кругом.</li>
-      <li>Каждая тренировка: разминка 8–10 мин → основная часть → заминка 5–10 мин.</li></ul>`:''}</div>`;
+      <li>Каждая тренировка: разминка 8–10 мин → основная часть → заминка 5–10 мин.</li></ul></details>`;
   return h+'</div>';
 }
 
@@ -543,11 +582,15 @@ function viewSettings(){
 }
 function timeOpts(){return ['07:00','12:00','18:00','20:00'].map(t=>`<button data-a="time" data-k="${t}" class="${S.remind.time===t?'on':''}">${t}</button>`).join('');}
 
-function viewNav(){
-  return [['today','Сегодня'],['program','Программа'],['prog','Усложнение'],['settings','Настройки']].map(([k,l])=>{
-    const a=S.tab===k;
-    return `<button data-a="tab" data-k="${k}" style="color:${a?'var(--ink)':'var(--muted)'}"><span class="pill" style="background:${a?'rgba(245,130,31,.16)':'transparent'}"><img src="${icon(SEC[k],a?'#f5821f':'#9a9aa2')}" alt=""></span><span class="lab" style="font-weight:${a?700:500}">${l}</span></button>`;
-  }).join('');
+function buildNav(){
+  $('nav').insertAdjacentHTML('beforeend',[['today','Сегодня'],['program','Программа'],['prog','Усложнение'],['settings','Настройки']].map(([k,l])=>
+    `<button data-a="tab" data-k="${k}"><span class="pill"><img class="i-off" src="${icon(SEC[k],'#9a9aa2')}" alt=""><img class="i-on" src="${icon(SEC[k],'#f5821f')}" alt=""></span><span class="lab">${l}</span></button>`).join(''));
+}
+// положение ленты вкладок и индикатора меню; pos — дробный индекс вкладки (во время свайпа)
+function placeTabs(pos,dragPx){
+  const nav=$('nav'),col=(nav.clientWidth-8)/4;
+  $('navInd').style.transform=`translateX(${4+col*pos+col/2-30}px)`;
+  $('track').style.transform=`translateX(calc(${-TABS.indexOf(S.tab)*100}% + ${dragPx||0}px))`;
 }
 
 /* Экран упражнения */
@@ -555,7 +598,7 @@ function viewSheet(){
   const sh=S.sheet,sw_=build(sh.week,sh.di),ex=sw_.exercises[sh.ei],src=DAYS[sh.di].ex[sh.ei];
   const pf=(S.perf[ex.name]||[]).slice(-6).reverse();
   return `<div style="flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px"><button data-a="closeSheet" class="back">‹</button><div style="flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(ex.label)}</div></div>
-  <div data-scroll="sheet" style="flex:1;overflow-y:auto;padding:8px 16px 24px">
+  <div data-key="sh${sh.di}-${sh.ei}-${sh.week}" style="flex:1;overflow-y:auto;padding:8px 16px 24px">
     <div style="display:flex;align-items:center;gap:14px"><span style="flex:none;display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:var(--s2);border:1px solid var(--line)"><img src="${ex.icon}" alt="" style="width:50px;height:50px"></span>
       <div style="min-width:0"><div class="kicker">День ${sw_.code} · неделя ${sw_.week}</div><span class="scheme${dlc(sw_.isDeload)}" style="display:inline-block;margin-top:6px;font-size:14px;padding:5px 12px">${esc(ex.scheme)}</span></div></div>
     <h1 style="font-size:28px;margin:18px 0 16px;line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:pretty">${esc(ex.name)}</h1>
@@ -587,7 +630,7 @@ function finish(w){
 }
 function mainAction(){
   const wk=S.wk,w=build(wk.week,wk.di),n=w.exercises.length;
-  if(wk.step===n+2){set({wk:null});toTop();return;}
+  if(wk.step===n+2){set({wk:null});toTop('today',true);return;}
   if(wk.step===n+1){finish(w);return;}
   if(wk.step===0){setWk({step:1});return;}
   const i=wk.step-1,ex=w.exercises[i];
@@ -633,7 +676,7 @@ function viewWk(){
       <div style="min-width:0"><div class="kicker">Упражнение ${i+1} из ${n}</div><span class="scheme${dlc(ww.isDeload)}" style="display:inline-block;margin-top:6px;font-size:14px;padding:5px 12px">${esc(ex.scheme)}</span></div></div>
       <h1 data-a="sheet" data-di="${wk.di}" data-ei="${i}" data-w="${wk.week}" style="cursor:pointer;font-size:26px;margin:16px 0 6px;line-height:1.12;letter-spacing:-.02em;font-weight:800;text-wrap:pretty">${esc(ex.name)}</h1>
       <div class="sub" style="margin-bottom:16px">${ll?'Прошлый раз: '+esc(ll):'Первый раз с этим вариантом'}</div>
-      ${ready(ex)?`<div style="background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.3);border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13.5px;color:var(--soft)"><b style="color:var(--blue)">↑ Пора усложнить.</b> Со следующей тренировки: ${esc(ex.nextName)}</div>`:''}
+      ${ready(ex)?`<div class="fx" style="background:rgba(90,169,230,.12);border:1px solid rgba(90,169,230,.3);border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13.5px;color:var(--soft)"><b style="color:var(--blue)">↑ Пора усложнить.</b> Со следующей тренировки: ${esc(ex.nextName)}</div>`:''}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">${Array.from({length:ex.sets},(_,k)=>{const done=k<d,next=k===d;
         return `<button class="setbtn" data-a="setTap" data-i="${k}" style="background:${done?'var(--acc)':'var(--s2)'};color:${done?'var(--on)':next?'var(--ink)':'var(--muted)'};border:${done?'1px solid var(--acc)':next?'1.5px solid var(--acc)':'1px solid var(--line)'};box-shadow:${done?'0 6px 16px -6px rgba(245,130,31,.6)':'none'}"><b>${done?reps[k]:k+1}</b><small>${done?(ex.hold?'сек':'✓'):'подх'}</small></button>`;}).join('')}</div>
       ${!allDone?`<div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px 16px">
@@ -641,7 +684,7 @@ function viewWk(){
         ${ex.hold?`<div style="margin-bottom:12px"><div style="height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:12px"><i id="holdBar" style="display:block;height:100%;border-radius:999px;background:${L.holdBar};width:${L.holdPct};transition:width .25s linear"></i></div>
           <button data-a="hold" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:14px;font-weight:800;font-size:16px;background:${L.holding?'var(--acc)':'var(--s3)'};color:${L.holding?'var(--on)':'var(--ink)'};border:1px solid ${L.holding?'var(--acc)':'var(--line)'}"><span id="holdClock" class="mono" style="font-size:22px">${L.holdClock}</span>${L.holding?'Стоп':'Старт удержания'}</button></div>`:''}
         <div style="display:flex;align-items:center;gap:10px"><button data-a="dec" class="stepper">−</button><div style="flex:1;text-align:center"><span id="holdVal" class="mono" style="font-size:40px;font-weight:700;letter-spacing:-.02em">${L.val}</span><span class="muted" style="font-size:14px;margin-left:6px">${ex.hold?'сек':ex.unit}</span></div><button data-a="inc" class="stepper">+</button></div></div>`
-      :`<div style="display:flex;align-items:center;gap:12px;background:rgba(245,130,31,.1);border:1px solid rgba(245,130,31,.28);border-radius:16px;padding:14px 16px"><span class="ok-ic" style="background:var(--acc);color:var(--on)">✓</span><div style="min-width:0"><div style="font-weight:700">Все подходы записаны</div><div class="sub">${reps.join(' · ')} ${ex.hold?'сек':ex.unit}</div></div></div>`}`;
+      :`<div class="fx" style="display:flex;align-items:center;gap:12px;background:rgba(245,130,31,.1);border:1px solid rgba(245,130,31,.28);border-radius:16px;padding:14px 16px"><span class="ok-ic" style="background:var(--acc);color:var(--on)">✓</span><div style="min-width:0"><div style="font-weight:700">Все подходы записаны</div><div class="sub">${reps.join(' · ')} ${ex.hold?'сек':ex.unit}</div></div></div>`}`;
   } else {
     const ups=ww.exercises.filter(ex=>ready(ex));
     body=`<div style="text-align:center;padding-top:4px"><div style="position:relative;height:230px;display:flex;justify-content:center;align-items:flex-end;background:radial-gradient(50% 55% at 50% 60%,rgba(245,140,45,.42),transparent 72%)"><img src="athlete-kb.webp" alt="" style="max-height:220px;filter:brightness(1.14) contrast(1.05) drop-shadow(0 0 22px rgba(255,165,75,.5))"></div>
@@ -652,8 +695,8 @@ function viewWk(){
   return `<div style="flex:none;padding:10px 16px 0"><div style="display:flex;align-items:center;gap:12px"><button data-a="wkClose" class="back" style="font-size:20px">×</button>
       <div style="flex:1;min-width:0;text-align:center"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${title}</div><div id="wkElapsed" class="mono muted" style="font-size:12px">${L.elapsed}</div></div>
       <div class="mono muted" style="flex:none;width:40px;text-align:right;font-size:12px">${step<=n+1?(step+1)+'/'+(n+2):''}</div></div>
-    <div style="display:flex;gap:4px;margin-top:12px">${Array.from({length:n+2},(_,i)=>`<span style="flex:1;height:4px;border-radius:2px;background:${i<step?'var(--acc)':i===step?'rgba(245,130,31,.45)':'rgba(255,255,255,.1)'}"></span>`).join('')}</div></div>
-  <div data-scroll="wk" style="flex:1;overflow-y:auto;padding:22px 20px 12px">${body}</div>
+    <div style="display:flex;gap:4px;margin-top:12px">${Array.from({length:n+2},(_,i)=>`<span style="flex:1;height:4px;border-radius:2px;background:${i<step?'var(--acc)':i===step?'rgba(245,130,31,.45)':'rgba(255,255,255,.1)'};transition:background .3s"></span>`).join('')}</div></div>
+  <div data-key="wk${step}" class="stepfx" style="flex:1;overflow-y:auto;padding:22px 20px 12px">${body}</div>
   <div style="flex:none;padding:10px 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:8px">${step>0&&step<=n+1?'<button data-a="wkPrev" style="flex:none;width:56px;border-radius:16px;background:var(--s2);border:1px solid var(--line);color:var(--ink);font-size:22px">‹</button>':''}
     <button id="mainBtn" data-a="wkMain" class="primary" style="flex:1;width:auto">${L.mainLabel}</button></div>`;
 }
@@ -681,13 +724,13 @@ function viewOnb(){
   if(st===1)body=`<div class="kicker">Шаг 1 из 3</div><h1 class="h1" style="margin:6px 0 8px">Когда начинаем?</h1>
     <p class="muted" style="font-size:15px;margin:0 0 20px">Дата старта — это неделя 1. Дальше «сегодня» считается само по календарю: Пн, Ср, Пт.</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">${[[iso(mon),'С этой недели',mon],[iso(nextMon),'Со следующей недели',nextMon]].map(([v,t,d])=>{const a=os===v;
-      return `<button data-a="obPick" data-k="${v}" style="display:flex;align-items:center;gap:12px;text-align:left;background:${a?'rgba(245,130,31,.1)':'var(--card)'};border:1px solid ${a?'rgba(245,130,31,.4)':'var(--line)'};border-radius:16px;padding:14px 16px;color:var(--ink)"><span style="flex:none;width:20px;height:20px;border-radius:50%;border:2px solid ${a?'var(--acc)':'var(--muted)'};display:flex;align-items:center;justify-content:center"><i style="width:10px;height:10px;border-radius:50%;background:${a?'var(--acc)':'transparent'}"></i></span><span style="flex:1;min-width:0"><span style="display:block;font-weight:700;font-size:15px">${t}</span><span class="muted" style="display:block;font-size:13px">Понедельник, ${fmtDate(d,{day:'numeric',month:'long'})}</span></span></button>`;}).join('')}</div>
+      return `<button data-a="obPick" data-k="${v}" style="display:flex;align-items:center;gap:12px;text-align:left;background:${a?'rgba(245,130,31,.1)':'var(--card)'};border:1px solid ${a?'rgba(245,130,31,.4)':'var(--line)'};border-radius:16px;padding:14px 16px;color:var(--ink)"><span style="flex:none;width:20px;height:20px;border-radius:50%;border:2px solid ${a?'var(--acc)':'var(--muted)'};display:flex;align-items:center;justify-content:center;transition:border-color .2s"><i style="width:10px;height:10px;border-radius:50%;background:${a?'var(--acc)':'transparent'};transform:scale(${a?1:.4});transition:background .2s,transform .25s cubic-bezier(.2,.8,.2,1)"></i></span><span style="flex:1;min-width:0"><span style="display:block;font-weight:700;font-size:15px">${t}</span><span class="muted" style="display:block;font-size:13px">Понедельник, ${fmtDate(d,{day:'numeric',month:'long'})}</span></span></button>`;}).join('')}</div>
     <label style="display:block;margin:0 0 6px;font-size:13.5px;color:var(--muted);font-weight:500">Или выбери дату</label>
     <input type="date" value="${os}" data-c="obSetStart" style="font:inherit;padding:12px;border:1px solid var(--line);border-radius:12px;width:100%;background:var(--s2);color:var(--ink)">`;
   if(st===2){const ic=GEAR_IC();body=`<div class="kicker">Шаг 2 из 3</div><h1 class="h1" style="margin:6px 0 8px">Инвентарь</h1>
     <p class="muted" style="font-size:15px;margin:0 0 20px">Программа рассчитана на этот набор. Гири — две по 16 кг: прогрессия идёт повторами и вариантом, не весом.</p>
     <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${GEAR.map((t,i)=>{const on=S.gear.includes(i);
-      return `<button data-a="gear" data-i="${i}" style="display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:${on?'rgba(245,130,31,.08)':'var(--card)'};border:1px solid ${on?'rgba(245,130,31,.35)':'var(--line)'};border-radius:16px;padding:14px;color:var(--ink);min-height:96px"><span style="display:flex;width:100%;justify-content:space-between;align-items:center"><img src="${ic[i]}" alt="" style="width:28px;height:28px"><span style="width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;background:${on?'var(--acc)':'transparent'};color:var(--on);border:1.5px solid ${on?'var(--acc)':'var(--muted)'}">${on?'✓':''}</span></span><span style="font-weight:700;font-size:14px;line-height:1.25">${t}</span></button>`;}).join('')}</div>
+      return `<button data-a="gear" data-i="${i}" style="display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:${on?'rgba(245,130,31,.08)':'var(--card)'};border:1px solid ${on?'rgba(245,130,31,.35)':'var(--line)'};border-radius:16px;padding:14px;color:var(--ink);min-height:96px"><span style="display:flex;width:100%;justify-content:space-between;align-items:center"><img src="${ic[i]}" alt="" style="width:28px;height:28px"><span style="width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;background:${on?'var(--acc)':'transparent'};color:var(--on);border:1.5px solid ${on?'var(--acc)':'var(--muted)'};transition:background .2s,border-color .2s">${on?'✓':''}</span></span><span style="font-weight:700;font-size:14px;line-height:1.25">${t}</span></button>`;}).join('')}</div>
     ${S.gear.length<6?'<p style="color:var(--blue);font-size:13.5px;margin:14px 0 0">Без части инвентаря некоторые упражнения придётся заменять — подсказки по замене есть в «Усложнении».</p>':''}`;}
   if(st===3)body=`<div class="kicker">Шаг 3 из 3</div><h1 class="h1" style="margin:6px 0 8px">Напоминания</h1>
     <p class="muted" style="font-size:15px;margin:0 0 20px">В дни тренировок пришлём уведомление с тем, что делать сегодня.</p>
@@ -695,29 +738,57 @@ function viewOnb(){
     ${S.remind.on?`<div class="opts">${timeOpts()}</div>`:''}`;
   return `<div style="flex:none;display:flex;align-items:center;gap:12px;padding:14px 20px 0;height:54px">${st>0?'<button data-a="obBack" style="background:none;color:var(--muted);font-weight:700;font-size:14px;padding:0">‹ Назад</button>':''}<div style="flex:1"></div>
     <div style="display:flex;gap:6px">${[0,1,2,3].map(i=>`<i style="width:${i===st?'22px':'6px'};height:6px;border-radius:3px;background:${i<=st?'var(--acc)':'rgba(255,255,255,.15)'};transition:width .25s,background .25s"></i>`).join('')}</div></div>
-  <div data-scroll="onb" style="flex:1;overflow-y:auto;padding:20px 24px">${body}</div>
+  <div data-key="ob${st}" class="stepfx" style="flex:1;overflow-y:auto;padding:20px 24px">${body}</div>
   <div style="flex:none;padding:12px 20px calc(18px + env(safe-area-inset-bottom,0px))"><button data-a="obNext" class="primary">${['Настроить за минуту','Дальше','Дальше','Готово — к тренировкам'][st]}</button></div>`;
 }
 
 /* ================= РЕНДЕР ================= */
+/* Морфинг: обновляем только изменившиеся узлы. Элементы остаются на месте —
+   поэтому срабатывают CSS-переходы, сохраняются прокрутка и раскрытые details.
+   data-key — «идентичность» блока: при смене ключа блок заменяется (и проигрывает анимацию появления). */
+const key=n=>n.nodeType===1?n.getAttribute('data-key'):null;
+function morph(el,html){const t=document.createElement('template');t.innerHTML=html;patch(el,t.content);}
+function patch(a,b){
+  const bn=[...b.childNodes];
+  bn.forEach((y,i)=>{
+    let x=a.childNodes[i];
+    if(!x){a.appendChild(y);return;}
+    if(key(x)!==key(y)){
+      const m=key(y)&&[...a.childNodes].slice(i+1).find(n=>key(n)===key(y));
+      if(m){a.insertBefore(m,x);x=m;}else{a.insertBefore(y,x);return;}
+    }
+    if(x.nodeType!==y.nodeType||x.nodeName!==y.nodeName){a.replaceChild(y,x);return;}
+    if(x.nodeType!==1){if(x.nodeValue!==y.nodeValue)x.nodeValue=y.nodeValue;return;}
+    for(const at of [...x.attributes])if(!y.hasAttribute(at.name))x.removeAttribute(at.name);
+    for(const at of [...y.attributes])if(x.getAttribute(at.name)!==at.value)x.setAttribute(at.name,at.value);
+    if(x.tagName==='INPUT'&&document.activeElement!==x&&x.value!==y.getAttribute('value'))x.value=y.getAttribute('value')||'';
+    patch(x,y);
+  });
+  while(a.childNodes.length>bn.length)a.removeChild(a.lastChild);
+}
 const $=id=>document.getElementById(id);
-function overlay(el,on,html){
-  const was=el.classList.contains('on');
-  if(on){el.innerHTML=html;if(!was)el.classList.add('on');}
-  else if(was){el.classList.remove('on');el.innerHTML='';}
+// оверлей: появление — анимацией .on, скрытие — анимацией .out, потом убираем
+function overlay(el,on,html,inner){
+  const was=el.classList.contains('on'),box=inner||el;
+  if(on){
+    if(el._t){clearTimeout(el._t);el._t=null;el.classList.remove('out');}
+    if(!was){box.innerHTML=html;el.classList.add('on');}else morph(box,html);
+  } else if(was&&!el._t){
+    el.classList.add('out');
+    el._t=setTimeout(()=>{el.classList.remove('on','out');box.innerHTML='';if(el.id==='wk')$('rest').classList.remove('on','out');el._t=null;},280);
+  }
 }
 function render(){
-  const keep={};document.querySelectorAll('[data-scroll]').forEach(e=>keep[e.dataset.scroll]=e.scrollTop);
   const c=ctx();
-  $('main').innerHTML=S.tab==='today'?viewToday(c):S.tab==='program'?viewProgram(c):S.tab==='prog'?viewProg(c):viewSettings();
-  $('nav').innerHTML=viewNav();
+  morph(pane('today'),viewToday(c));morph(pane('program'),viewProgram(c));morph(pane('prog'),viewProg(c));morph(pane('settings'),viewSettings());
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.tab));
+  placeTabs(TABS.indexOf(S.tab));
   overlay($('sheet'),!!S.sheet,S.sheet?viewSheet():'');
-  if(S.wk){$('wk').classList.add('on');$('wkInner').innerHTML=viewWk();const L=wkLive();overlay($('rest'),L.resting,L.resting?viewRest():'');}
-  else{$('wk').classList.remove('on');$('wkInner').innerHTML='';overlay($('rest'),false);}
+  overlay($('wk'),!!S.wk,S.wk?viewWk():'',$('wkInner'));
+  if(S.wk){const L=wkLive();overlay($('rest'),L.resting,L.resting?viewRest():'');}
   overlay($('onb'),!S.onboarded,!S.onboarded?viewOnb():'');
   const nb=build(c.dec.week,c.dec.dayIndex);
   overlay($('notif'),S.notif,`<img src="icons/icon-192.png" alt="" style="flex:none;width:36px;height:36px;border-radius:50%"><div style="flex:1;min-width:0"><div class="muted" style="font-size:12px">Тренировки · сейчас</div><div style="font-weight:700;font-size:15px;margin-top:2px">Сегодня: День ${nb.code} · ${esc(nb.dayName)}</div><div style="color:var(--soft);font-size:13.5px">Неделя ${c.dec.week} · ~50 мин. Нажми, чтобы начать.</div></div>`);
-  document.querySelectorAll('[data-scroll]').forEach(e=>{if(keep[e.dataset.scroll]!=null)e.scrollTop=keep[e.dataset.scroll];});
 }
 // точечное обновление тикающих значений
 function live(){
@@ -748,8 +819,9 @@ function stepVal(sign){
   a[i]=Math.max(0,a[i]+sign*(ex.hold?5:1));setWk({val:a});
 }
 const A={
-  tab:d=>{set({tab:d.k,sheet:null});toTop();},
-  backToday:()=>{set({browseWeek:null,browseDay:0,openEx:-1});toTop();},
+  // повторный тап по активной вкладке — плавно наверх (как в iOS)
+  tab:d=>{if(S.tab===d.k)return toTop(d.k,true);set({tab:d.k,sheet:null});},
+  backToday:()=>{set({browseWeek:null,browseDay:0,openEx:-1});toTop('today',true);},
   // в день отдыха — открыть пропущенную; в тренировочный — сдвинуть график на одну назад
   catchUp:()=>{
     const c=ctx();save('trn_dismiss',c.lastISO);
@@ -760,11 +832,9 @@ const A={
   peekPrev:()=>{const pv=decode(Math.max(0,session().idx-1));set({browseWeek:pv.week,browseDay:pv.dayIndex,openEx:-1});},
   day:d=>set({browseDay:+d.i,openEx:-1}),
   startWk:startWorkout,
-  warm:()=>set({openWarm:!S.openWarm}), cool:()=>set({openCool:!S.openCool}), how:()=>set({openHow:!S.openHow}),
-  ex:d=>set({openEx:S.openEx===+d.i?-1:+d.i}),
   sheet:d=>set({sheet:{di:+d.di,ei:+d.ei,week:+d.w}}),
   closeSheet:()=>set({sheet:null}),
-  week:d=>{set({tab:'today',browseWeek:+d.n,browseDay:0,openEx:-1});toTop();},
+  week:d=>{set({tab:'today',browseWeek:+d.n,browseDay:0,openEx:-1});toTop('today');},
   progTab:d=>set({progTab:d.k}),
   shift:d=>setOffset(S.offset+(+d.n)),
   resetOffset:()=>setOffset(0),
@@ -780,7 +850,7 @@ const A={
   obNext:()=>{
     if(S.obStep<3)return set({obStep:S.obStep+1});
     const st=obStart();save('trn_onboarded','1');save('trn_start',st);save('trn_gear',S.gear);
-    set({onboarded:true,obStep:0,start:st,tab:'today'});toTop();
+    set({onboarded:true,obStep:0,start:st,tab:'today'});toTop('today');
   },
   obPick:d=>set({obStartPick:d.k}),
   gear:d=>{const i=+d.i;set({gear:S.gear.includes(i)?S.gear.filter(x=>x!==i):[...S.gear,i]});},
@@ -805,9 +875,59 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-a]');if(!el)return;
   const f=A[el.dataset.a];if(f)f(el.dataset);
 });
+/* Аккордеоны — нативные details: запоминаем, что открыто (чтобы пережить перерисовку),
+   и после анимации подкручиваем раскрытое в зону видимости. toggle не всплывает — ловим в фазе захвата. */
+const OPEN_KEY={warm:'openWarm',cool:'openCool',how:'openHow'};
+document.addEventListener('toggle',e=>{
+  const d=e.target,t=d.dataset&&d.dataset.t;if(!t)return;
+  let was;
+  if(t==='ex'){const i=+d.dataset.i;was=S.openEx===i;if(d.open)S.openEx=i;else if(was)S.openEx=-1;}
+  else{was=S[OPEN_KEY[t]];S[OPEN_KEY[t]]=d.open;}
+  if(d.open&&!was)setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'nearest'}),580);
+},true);
 document.addEventListener('change',e=>{const el=e.target.closest('[data-c]');if(el&&C[el.dataset.c])C[el.dataset.c](el.value);});
 
+/* Свайп между вкладками: лента едет за пальцем, отпускание — докатывается или возвращается.
+   Вертикальную прокрутку браузер забирает сам (touch-action:pan-y) — тогда придёт pointercancel. */
+let drag=null,noClick=false;
+const mainEl=$('main');
+mainEl.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='touch'||S.wk||S.sheet||!S.onboarded)return;
+  drag={x:e.clientX,y:e.clientY,id:e.pointerId,lock:null,dx:0,lx:e.clientX,lt:e.timeStamp,v:0};
+});
+mainEl.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.id)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.lock){
+    if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+    drag.lock=Math.abs(dx)>Math.abs(dy)*1.2?'x':'y';
+    if(drag.lock==='x'){$('track').style.transition='none';$('navInd').style.transition='none';try{mainEl.setPointerCapture(e.pointerId);}catch(_){}}
+  }
+  if(drag.lock!=='x')return;
+  const i=TABS.indexOf(S.tab),w=mainEl.clientWidth,edge=(i===0&&dx>0)||(i===TABS.length-1&&dx<0);
+  const d=edge?dx/3:dx; // «резинка» на краях
+  const dt=e.timeStamp-drag.lt;if(dt>0)drag.v=(e.clientX-drag.lx)/dt;drag.lx=e.clientX;drag.lt=e.timeStamp;
+  drag.dx=d;placeTabs(i-d/w,d);
+});
+function endDrag(e,cancel){
+  if(!drag||e.pointerId!==drag.id)return;
+  const g=drag;drag=null;if(g.lock!=='x')return;
+  $('track').style.transition='';$('navInd').style.transition='';
+  noClick=true;setTimeout(()=>noClick=false,60);
+  const i=TABS.indexOf(S.tab),w=mainEl.clientWidth;let t=i;
+  if(!cancel){if(g.dx<-w*.22||g.v<-.45)t=i+1;else if(g.dx>w*.22||g.v>.45)t=i-1;}
+  t=Math.max(0,Math.min(TABS.length-1,t));
+  if(t!==i)set({tab:TABS[t]});else placeTabs(i);
+}
+mainEl.addEventListener('pointerup',e=>endDrag(e,false));
+mainEl.addEventListener('pointercancel',e=>endDrag(e,true));
+document.addEventListener('click',e=>{if(noClick){e.stopPropagation();e.preventDefault();}},true);
+window.addEventListener('resize',()=>{$('track').style.transition='none';placeTabs(TABS.indexOf(S.tab));requestAnimationFrame(()=>$('track').style.transition='');});
+
+buildNav();
+$('track').style.transition=$('navInd').style.transition='none';
 render();
+requestAnimationFrame(()=>requestAnimationFrame(()=>{$('track').style.transition=$('navInd').style.transition='';}));
 
 /* регистрация service worker — нужна, чтобы Chrome предлагал установку и для офлайна */
 if('serviceWorker' in navigator){
