@@ -1,6 +1,6 @@
 // Service worker: кэширует приложение для офлайн-работы.
-const CACHE = 'training-v4';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.png', './athlete-kb.webp', './athlete-run.webp'];
+const CACHE = 'training-v5';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-192.png', './icons/icon-maskable-512.png', './athlete-kb.webp', './athlete-run.webp'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
